@@ -31,3 +31,14 @@ function isOnlyNumberString(string = '') {
 function removeExceptNumbers(string = '') {
 	return string.replace(/[^\d]/g, '');
 }
+
+/**
+ * 핸드폰, 전화번호 검증
+ * @param {string} phone 
+ * @returns {boolean}
+ */
+function validatePhone(phone = '') {
+	const regex = /[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}/;
+
+	return regex.test(phone);
+}
