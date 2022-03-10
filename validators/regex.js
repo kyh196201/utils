@@ -1,6 +1,9 @@
 /**
  * https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript
  * 이메일 validation 체크
+ * 
+ * https://github.com/dream-ellie/regex
+ * 
  */
 function validateEmail(email = '') {
 	const re =
@@ -42,3 +45,24 @@ function validatePhone(phone = '') {
 
 	return regex.test(phone);
 }
+
+/**
+ * 숫자, 한글, 영어 대/소문자 제외한 모든 문자 제거하기
+ * https://eblee-repo.tistory.com/40
+ * @param {string} string 
+ * @returns {string}
+ */
+function removeExceptNumberAndKoreanAndAlphabet(string = '') {
+	const regex = /[^\da-zA-Zㄱ-ㅎㅏ-ㅣ가-힣]/gm;
+
+	return string.replace(regex, '');
+}
+
+/**
+ * 
+ * @param {Event | InputEvent | KeyboardEvent} event
+ */
+const handleInput = (event) => {
+	const replacedString = removeExceptNumberAndKoreanAndAlphabet(event.target.value);
+	event.target.value = replacedString;
+};
