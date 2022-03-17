@@ -66,3 +66,20 @@ const handleInput = (event) => {
 	const replacedString = removeExceptNumberAndKoreanAndAlphabet(event.target.value);
 	event.target.value = replacedString;
 };
+
+/**
+ * 하나 이상의 영어(대/소문자), 숫자, 특수문자(_)를 포함하고, 길이가 6 ~ 20자인지 체크하는 정규식
+ * @returns {Regexp} : 정규식
+ * 
+ * daplus.net/javascript-암호에-대한-정규식은-8-자-이상-하나-이상의-숫자/
+ * 
+ * @TODO 이름 수정
+ */
+function getSpecialRegex() {
+	const regex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*_)[a-zA-Z\d_]{6,20}$/;
+
+	// 위 케이스에서 하나 이상의 영어 대, 소문자를 각각 하나 이상 포함해야하는 케이스
+	// const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*_)[a-zA-Z\d_]{6,20}$/;
+
+	return regex;
+}
