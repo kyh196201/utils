@@ -42,6 +42,7 @@ function removeExceptNumbers(string = '') {
  */
 function validatePhone(phone = '') {
 	const regex = /[0-9]{2,3}-[0-9]{3,4}-[0-9]{4}/;
+	// /[0-9]{3}-[0-9]{4}-[0-9]{4}/
 
 	return regex.test(phone);
 }
@@ -83,3 +84,67 @@ function getSpecialRegex() {
 
 	return regex;
 }
+
+// https://velog.io/@seob/regex-is-easy#이제는-실전이야-전화번호-찾기
+const contactValidators = {
+	isContact: function(contact) {
+		return /^\d{2,4}-\d{3,4}(-\d{4})?$/.test(contact);
+	},
+
+	isValidLength: function(contact){
+		const checkValue = contact.replace(/-/gi, '');
+
+		return checkValue.length <= 12 && checkValue.length > 0;
+	},
+
+	isCommonServiceContact: function(contact){
+		return /^(0[5-9]0)-[0-9]{3,4}-[0-9]{4}$/.test(contact);
+	},
+
+	isZeroCharatorContact: function(contact){
+		return contact.replace(/-/gi, '').indexOf('0000000') < 0;
+	},
+
+	isSupplementaryServiceContact: function(contact){
+		return /^(1[4-8][0-9][0-9])-\d{4}$/.test(contact);
+	},
+
+	// 핸드폰 여부
+	isMobileContact: function(contact){
+		return /^(01[0-9])-\d{3,4}-\d{4}$/.test(contact);
+	},
+
+	// 서울 지역 여부
+	isSeoulLocalContact: function(contact){
+		return /^(02)-[0-9]{3,4}-[0-9]{4}$/.test(contact);
+	},
+
+	// 서울외 지역 여부
+	isOtherLocalContact: function(contact){
+		return /^(0[2-9][0-9])-[0-9]{3,4}-[0-9]{4}$/.test(contact);
+	},
+
+	isLocalContact: function(contact){
+		return this.isSeoulLocalContact(contact) || this.isOtherLocalContact(contact);
+	},
+
+	isServiceContact: function(contact){
+		return /^(050(7|8)?)-[0-9]{4}-[0-9]{4}$/.test(contact);
+	},
+
+	isValidContact: function(contact) {
+		if (!this.isContact(contact)) return false;
+
+		if (!this.isValidLength(contact)) return false;
+		
+		if (!this.isZeroCharatorContact(contact)) return false;
+
+		return (
+			this.isCommonServiceContact(contact) || 
+			this.isSupplementaryServiceContact(contact) ||
+			this.isLocalContact(contact) ||
+			this.isMobileContact(contact) ||
+			this.isServiceContact(contact)
+		);
+	},
+};
