@@ -86,65 +86,36 @@ function getSpecialRegex() {
 }
 
 // https://velog.io/@seob/regex-is-easy#이제는-실전이야-전화번호-찾기
-const contactValidators = {
-	isContact: function(contact) {
-		return /^\d{2,4}-\d{3,4}(-\d{4})?$/.test(contact);
-	},
+// https://eunjinii.tistory.com/133
+const serviceNumber = /(^1\d{3})-?(\d{4})$/;  // 1588, 1566, 1677
 
-	isValidLength: function(contact){
-		const checkValue = contact.replace(/-/gi, '');
+const serviceNumberWithDash = /(^1\d{3})-(\d{4})$/;
 
-		return checkValue.length <= 12 && checkValue.length > 0;
-	},
+const phoneNumber = /(^02|^050[1-9]|^0[5-9]0|^0\d{2})-?(\d{3,4})-?(\d{4})$/;  // 02, 0507, 050, 070, 031, 010, 011~
 
-	isCommonServiceContact: function(contact){
-		return /^(0[5-9]0)-[0-9]{3,4}-[0-9]{4}$/.test(contact);
-	},
+const phoneNumberWithDash = /(^02|^050[1-9]|^0[5-9]0|^0\d{2})-(\d{3,4})-(\d{4})$/;
 
-	isZeroCharatorContact: function(contact){
-		return contact.replace(/-/gi, '').indexOf('0000000') < 0;
-	},
+// 지역번호, 서비스번호, 핸드폰 번호를 포함한 다양한 포맷에 대한 전화번호 검증 함수
+function validatePhoneNumber(str, isDash = false) {
+	if (typeof str !== 'string') return '';
 
-	isSupplementaryServiceContact: function(contact){
-		return /^(1[4-8][0-9][0-9])-\d{4}$/.test(contact);
-	},
+	// 숫자, -을 제외한 다른 문자가 있을 경우
+	if (/[^0-9-]/.test(str)) return false;
 
-	// 핸드폰 여부
-	isMobileContact: function(contact){
-		return /^(01[0-9])-\d{3,4}-\d{4}$/.test(contact);
-	},
+	if (isDash) {
+		return serviceNumberWithDash.test(str) || phoneNumberWithDash.test(str);
+	}
 
-	// 서울 지역 여부
-	isSeoulLocalContact: function(contact){
-		return /^(02)-[0-9]{3,4}-[0-9]{4}$/.test(contact);
-	},
+	return serviceNumber.test(str) || phoneNumber.test(str);
+}
 
-	// 서울외 지역 여부
-	isOtherLocalContact: function(contact){
-		return /^(0[2-9][0-9])-[0-9]{3,4}-[0-9]{4}$/.test(contact);
-	},
+// 지역번호, 서비스번호, 핸드폰 번호를 포함한 다양한 포맷에 대한 전화번호를 하이픈을 포함한 포맷으로 변환
+function formatPhoneNumber(str) {
+	if (typeof str !== 'string') return '';
 
-	isLocalContact: function(contact){
-		return this.isSeoulLocalContact(contact) || this.isOtherLocalContact(contact);
-	},
+	if (str.indexOf('1') === 0) {
+		return str.replace(/(^1\d{3})-?(\d{4})$/, '$1-$2');
+	}
 
-	isServiceContact: function(contact){
-		return /^(050(7|8)?)-[0-9]{4}-[0-9]{4}$/.test(contact);
-	},
-
-	isValidContact: function(contact) {
-		if (!this.isContact(contact)) return false;
-
-		if (!this.isValidLength(contact)) return false;
-		
-		if (!this.isZeroCharatorContact(contact)) return false;
-
-		return (
-			this.isCommonServiceContact(contact) || 
-			this.isSupplementaryServiceContact(contact) ||
-			this.isLocalContact(contact) ||
-			this.isMobileContact(contact) ||
-			this.isServiceContact(contact)
-		);
-	},
+	return str.replace(/(^02|^050[1-9]|^0[5-9]0|^0\d{2})-?(\d{3,4})-?(\d{4})$/, '$1-$2-$3');
 };
